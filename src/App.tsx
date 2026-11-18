@@ -6,12 +6,11 @@ type Flashcard = {
 };
 
 function App() {
-  const [showMeaning, setShowMeaning] = useState(false);
-
   const [word, setWord] = useState("");
   const [meaning, setMeaning] = useState("");
   const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
-  const [flippedCard, setFlippedCard] = useState<number | null>(null);
+  const [flippedCard, setFlippedCard] = useState<Set<number | null>>(new Set(null));
+
 
   function addFlashcard(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -47,10 +46,19 @@ function App() {
             key={index}
             className="flashcard"
             type="button"
-            aria-pressed={flippedCard === index}
-            onClick={() => setFlippedCard(flippedCard === index ? null : index)}
+            aria-pressed={flippedCard.has(index)}
+            onClick={() => setFlippedCard((current) => {
+              const next = new Set(current);
+              
+              if (next.has(index)) {
+                next.delete(index);
+              }else {
+                next.add(index);
+              }
+              return next;
+            })}
           >
-            {flippedCard === index ? flashcard.meaning : flashcard.word}
+            {flippedCard.has(index) ? flashcard.meaning : flashcard.word}
           </button>
         ))}
       </section>
