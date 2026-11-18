@@ -26,3 +26,30 @@ main {
 h1 {
   margin-bottom: 0.5rem;
 }
+
+.flashcard {
+  width: min(20rem, 80vw);
+  min-height: 12rem;
+  padding: 1.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.75rem;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+  font-size: 1.25rem;
+  box-shadow: 0 4px 12px rgb(31 41 55 / 10%);
+  cursor: pointer;
+  transition:
+    box-shadow 150ms ease,
+    transform 150ms ease;
+}
+
+.flashcard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgb(31 41 55 / 14%);
+}
+
+.flashcard:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 3px;
+}
