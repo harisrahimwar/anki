@@ -1,4 +1,4 @@
-import {useState, type SubmitEvent} from "react";
+import {useState, type SubmitEvent, useEffect} from "react";
 
 type LoginProps = {
     onLogin: () => void;
@@ -8,20 +8,20 @@ function login({onLogin}: LoginProps) {
     const [msisdn, setMsisdn] = useState("");
     const [error, setError] = useState("")
 
-    // useEffect(() => {
-    //     const getUserInfo = (window as Window & {
-    //     cdsdk?: { getUserInfo?: () => Promise<{ idNumber?: string }> };
-    //     }).cdsdk?.getUserInfo;
+    useEffect(() => {
+        const getUserInfo = (window as Window & {
+        cdsdk?: { getUserInfo?: () => Promise<{ idNumber?: string }> };
+        }).cdsdk?.getUserInfo;
 
-    //     if (!getUserInfo) {
-    //         setMsisdn("Unavailable");
-    //         return;
-    //     }
+        if (!getUserInfo) {
+            setMsisdn("Unavailable");
+            return;
+        }
 
-    //     getUserInfo()
-    //     .then((info) => setMsisdn(info.idNumber ?? "Unavailable"))
-    //     .catch(() => setMsisdn("Unable to load"));
-    // }, []);
+        getUserInfo()
+        .then((info) => setMsisdn(info.idNumber ?? "Unavailable"))
+        .catch(() => setMsisdn("Unable to load"));
+    }, []);
 
     function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -36,6 +36,7 @@ function login({onLogin}: LoginProps) {
     return (
         <main>
             <h1>Login</h1>
+            echo "MSISDN: {msisdn}"
             <form className="login-form" onSubmit={handleSubmit}>
                 <label htmlFor="msisdn">MSISDN</label>
                 <input
