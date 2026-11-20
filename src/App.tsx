@@ -1,4 +1,5 @@
 import { useState, type SubmitEvent } from "react";
+import Login from "./login";
 
 type Flashcard = {
   word: string;
@@ -10,6 +11,11 @@ function App() {
   const [meaning, setMeaning] = useState("");
   const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
   const [flippedCard, setFlippedCard] = useState<Set<number | null>>(new Set(null));
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  if (!isLoggedIn) {
+    return <Login onLogin={() => setIsLoggedIn(true)} />;
+  }
 
 
   function addFlashcard(event: SubmitEvent<HTMLFormElement>) {
