@@ -39,6 +39,7 @@ export function Home() {
             key={`${flashcard.word}-${index}`}
             className="flashcard"
             type="button"
+            //if flashcard has an index (card is showing meaning) the button is considered presse
             aria-pressed={flippedCard.has(index)}
             onClick={() =>
               setFlippedCard((current) => {
