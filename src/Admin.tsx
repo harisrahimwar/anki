@@ -1,17 +1,14 @@
 import { useState, type SubmitEvent } from "react";
+import { Link, useOutletContext } from "react-router";
+import type { AppOutletContext } from "./App";
 
 export type Flashcard = {
   word: string;
   meaning: string;
 };
 
-type AdminProps = {
-  flashcards: Flashcard[];
-  onAdd: (flashcard: Flashcard) => void;
-  onBack: () => void;
-};
-
-function Admin({ flashcards, onAdd, onBack }: AdminProps) {
+function Admin() {
+  const { flashcards, onAdd } = useOutletContext<AppOutletContext>();
   const [word, setWord] = useState("");
   const [meaning, setMeaning] = useState("");
 
@@ -29,9 +26,7 @@ function Admin({ flashcards, onAdd, onBack }: AdminProps) {
 
   return (
     <section className="admin-panel" aria-labelledby="admin-heading">
-      <button type="button" onClick={onBack}>
-        Back to flashcards
-      </button>
+      <Link to="/">Back to flashcards</Link>
       <h2 id="admin-heading">Admin Panel</h2>
 
       <form className="flashcard-form" onSubmit={addFlashcard}>

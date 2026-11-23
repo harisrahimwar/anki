@@ -1,12 +1,16 @@
 import { useState } from "react";
-import Admin, { type Flashcard } from "./Admin";
+import { Link, Outlet, useOutletContext } from "react-router";
+import type { Flashcard } from "./Admin";
 import Login from "./login";
+
+export type AppOutletContext = {
+  flashcards: Flashcard[];
+  onAdd: (flashcard: Flashcard) => void;
+};
 
 function App() {
   const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
-  const [flippedCard, setFlippedCard] = useState<Set<number>>(() => new Set());
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isAdminView, setIsAdminView] = useState(false);
 
   function addFlashcard(flashcard: Flashcard) {
     setFlashcards((cards) => [...cards, flashcard]);
@@ -16,26 +20,19 @@ function App() {
     return <Login onLogin={() => setIsLoggedIn(true)} />;
   }
 
-  if (isAdminView) {
-    return (
-      <main>
-        <Admin
-          flashcards={flashcards}
-          onAdd={addFlashcard}
-          onBack={() => setIsAdminView(false)}
-        />
-      </main>
-    );
-  }
+  return (
+    <Outlet context={{ flashcards, onAdd: addFlashcard }} />
+  );
+}
+
+export function Home() {
+  const { flashcards } = useOutletContext<AppOutletContext>();
+  const [flippedCard, setFlippedCard] = useState<Set<number>>(() => new Set());
 
   return (
     <main>
       <h1>Anki Flashcards</h1>
-
-      <button type="button" onClick={() => setIsAdminView(true)}>
-        Admin
-      </button>
-
+      <Link to="/admin">Admin</Link>
       <section className="flashcard-container" aria-label="Flashcards">
         {flashcards.map((flashcard, index) => (
           <button
@@ -46,7 +43,6 @@ function App() {
             onClick={() =>
               setFlippedCard((current) => {
                 const next = new Set(current);
-
                 if (next.has(index)) {
                   next.delete(index);
                 } else {
