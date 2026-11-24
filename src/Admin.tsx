@@ -3,31 +3,49 @@ import { Link, useOutletContext } from "react-router";
 import type { AppOutletContext } from "./App";
 
 export type Flashcard = {
+  id: string;
   word: string;
   meaning: string;
 };
 
+export type NewFlashcard = Omit<Flashcard, "id">;
+
 function Admin() {
-  const { flashcards, onAdd } = useOutletContext<AppOutletContext>();
+  const { flashcards, isLoading, loadError, onAdd } =
+    useOutletContext<AppOutletContext>();
   const [word, setWord] = useState("");
   const [meaning, setMeaning] = useState("");
+  const [saveError, setSaveError] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
-  function addFlashcard(event: SubmitEvent<HTMLFormElement>) {
+  async function addFlashcard(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const trimmedWord = word.trim();
     const trimmedMeaning = meaning.trim();
     if (!trimmedWord || !trimmedMeaning) return;
 
-    onAdd({ word: trimmedWord, meaning: trimmedMeaning });
-    setWord("");
-    setMeaning("");
+    setIsSaving(true);
+    setSaveError("");
+    try {
+      await onAdd({ word: trimmedWord, meaning: trimmedMeaning });
+      setWord("");
+      setMeaning("");
+    } catch (error) {
+      setSaveError(
+        error instanceof Error ? error.message : "Unable to save the flashcard.",
+      );
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   return (
     <section className="admin-panel" aria-labelledby="admin-heading">
       <Link to="/">Back to flashcards</Link>
       <h2 id="admin-heading">Admin Panel</h2>
+
+      {loadError && <p role="alert">Could not load flashcards: {loadError}</p>}
 
       <form className="flashcard-form" onSubmit={addFlashcard}>
         <label>
@@ -48,8 +66,12 @@ function Admin() {
             required
           />
         </label>
-        <button type="submit">Add Flashcard</button>
+        <button type="submit" disabled={isLoading || isSaving}>
+          {isSaving ? "Saving..." : "Add Flashcard"}
+        </button>
       </form>
+
+      {saveError && <p role="alert">Could not save flashcard: {saveError}</p>}
 
       <div className="flashcard-table-wrapper">
         <table className="flashcard-table">
@@ -60,13 +82,17 @@ function Admin() {
             </tr>
           </thead>
           <tbody>
-            {flashcards.length === 0 ? (
+            {isLoading ? (
+              <tr>
+                <td colSpan={2}>Loading flashcards...</td>
+              </tr>
+            ) : flashcards.length === 0 ? (
               <tr>
                 <td colSpan={2}>No flashcards have been added yet.</td>
               </tr>
             ) : (
-              flashcards.map((flashcard, index) => (
-                <tr key={`${flashcard.word}-${index}`}>
+              flashcards.map((flashcard) => (
+                <tr key={flashcard.id}>
                   <td>{flashcard.word}</td>
                   <td>{flashcard.meaning}</td>
                 </tr>
