@@ -24,7 +24,7 @@ function App() {
       try {
         const { data, error } = await getSupabaseClient()
           .from("flashcards")
-          .select("id, word, meaning")
+          .select("id, word, meaning, country")
           .order("created_at", { ascending: true })
           .returns<Flashcard[]>();
 
@@ -83,38 +83,68 @@ function App() {
 export function Home() {
   const { flashcards, isLoading, loadError } =
     useOutletContext<AppOutletContext>();
-  const [flippedCard, setFlippedCard] = useState<Set<number>>(() => new Set());
+  const [selectedCountry, setSelectedCountry] = useState("");
+  const [flippedCard, setFlippedCard] = useState<Set<string>>(() => new Set());
+  const countries = [...new Set(flashcards.map((flashcard) => flashcard.country))]
+    .filter(Boolean)
+    .sort();
+  const visibleFlashcards = selectedCountry
+    ? flashcards.filter((flashcard) => flashcard.country === selectedCountry)
+    : flashcards;
 
   return (
     <main>
       <h1>Anki Flashcards</h1>
       <Link to="/admin">Admin</Link>
       {loadError && <p role="alert">Could not load flashcards: {loadError}</p>}
+      <label>
+        Filter by country
+        <select
+          value={selectedCountry}
+          onChange={(event) => setSelectedCountry(event.target.value)}
+        >
+          <option value="">All countries</option>
+          {countries.map((country) => (
+            <option key={country} value={country}>
+              {country}
+            </option>
+          ))}
+        </select>
+      </label>
       <section className="flashcard-container" aria-label="Flashcards">
         {isLoading ? (
           <p>Loading flashcards...</p>
-        ) : flashcards.map((flashcard, index) => (
-          <button
-            key={flashcard.id}
-            className="flashcard"
-            type="button"
-            //if flashcard has an index (card is showing meaning) the button is considered presse
-            aria-pressed={flippedCard.has(index)}
-            onClick={() =>
-              setFlippedCard((current) => {
-                const next = new Set(current);
-                if (next.has(index)) {
-                  next.delete(index);
-                } else {
-                  next.add(index);
-                }
-                return next;
-              })
-            }
-          >
-            {flippedCard.has(index) ? flashcard.meaning : flashcard.word}
-          </button>
-        ))}
+        ) : visibleFlashcards.length === 0 ? (
+          <p>
+            {selectedCountry
+              ? `No flashcards found for ${selectedCountry}.`
+              : "No flashcards have been added yet."}
+          </p>
+        ) : (
+          visibleFlashcards.map((flashcard) => (
+            <button
+              key={flashcard.id}
+              className="flashcard"
+              type="button"
+              aria-pressed={flippedCard.has(flashcard.id)}
+              onClick={() =>
+                setFlippedCard((current) => {
+                  const next = new Set(current);
+                  if (next.has(flashcard.id)) {
+                    next.delete(flashcard.id);
+                  } else {
+                    next.add(flashcard.id);
+                  }
+                  return next;
+                })
+              }
+            >
+              {flippedCard.has(flashcard.id)
+                ? flashcard.meaning
+                : flashcard.word}
+            </button>
+          ))
+        )}
       </section>
     </main>
   );
