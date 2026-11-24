@@ -59,7 +59,7 @@ function App() {
     const { data, error } = await getSupabaseClient()
       .from("flashcards")
       .insert(flashcard)
-      .select("id, word, meaning")
+      .select("id, word, meaning, country")
       .single()
       .returns<Flashcard>();
 

@@ -6,6 +6,7 @@ export type Flashcard = {
   id: string;
   word: string;
   meaning: string;
+  country: string;
 };
 
 export type NewFlashcard = Omit<Flashcard, "id">;
@@ -15,6 +16,7 @@ function Admin() {
     useOutletContext<AppOutletContext>();
   const [word, setWord] = useState("");
   const [meaning, setMeaning] = useState("");
+  const [country, setCountry] = useState("");
   const [saveError, setSaveError] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
@@ -23,14 +25,16 @@ function Admin() {
 
     const trimmedWord = word.trim();
     const trimmedMeaning = meaning.trim();
-    if (!trimmedWord || !trimmedMeaning) return;
+    const trimmedCountry = country.trim();
+    if (!trimmedWord || !trimmedMeaning || !trimmedCountry) return;
 
     setIsSaving(true);
     setSaveError("");
     try {
-      await onAdd({ word: trimmedWord, meaning: trimmedMeaning });
+      await onAdd({ word: trimmedWord, meaning: trimmedMeaning, country: trimmedCountry });
       setWord("");
       setMeaning("");
+      setCountry("");
     } catch (error) {
       setSaveError(
         error instanceof Error ? error.message : "Unable to save the flashcard.",
@@ -66,6 +70,15 @@ function Admin() {
             required
           />
         </label>
+        <label>
+          Country
+          <input
+            type="text"
+            value={country}
+            onChange={(event) => setCountry(event.target.value)}
+            required
+          />
+        </label>
         <button type="submit" disabled={isLoading || isSaving}>
           {isSaving ? "Saving..." : "Add Flashcard"}
         </button>
@@ -79,6 +92,7 @@ function Admin() {
             <tr>
               <th scope="col">Word</th>
               <th scope="col">Meaning</th>
+              <th scope="col">Country</th>
             </tr>
           </thead>
           <tbody>
@@ -95,6 +109,7 @@ function Admin() {
                 <tr key={flashcard.id}>
                   <td>{flashcard.word}</td>
                   <td>{flashcard.meaning}</td>
+                  <td>{flashcard.country}</td>
                 </tr>
               ))
             )}

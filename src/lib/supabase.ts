@@ -8,18 +8,21 @@ type Database = {
           id: number;
           word: string;
           meaning: string;
+          country: string;
           created_at: string;
         };
         Insert: {
           id?: number;
           word: string;
           meaning: string;
+          country: string;
           created_at?: string;
         };
         Update: {
           id?: number;
           word?: string;
           meaning?: string;
+          country?: string;
           created_at?: string;
         };
         Relationships: [];
