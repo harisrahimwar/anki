@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, Outlet, useOutletContext } from "react-router";
-import type { Flashcard, NewFlashcard } from "./Admin";
+import { FLASHCARD_COUNTRIES, type Flashcard, type NewFlashcard } from "./Admin";
 import Login from "./login";
 import { getSupabaseClient } from "./lib/supabase";
 
@@ -9,6 +9,25 @@ export type AppOutletContext = {
   isLoading: boolean;
   loadError: string | null;
   onAdd: (flashcard: NewFlashcard) => Promise<void>;
+};
+
+//Defining Geocoding API response type
+type LocationPickerResult = {
+  latitude: number;
+  longitude: number;
+  address?: string;
+};
+
+type GeoapifyResponse = {
+  results?: Array<{
+    country_code?: string;
+  }>;
+};
+
+const COUNTRY_BY_CODE: Record<string, (typeof FLASHCARD_COUNTRIES)[number]> = {
+  MY: "Malaysia",
+  JP: "Japan",
+  CN: "China",
 };
 
 function App() {
@@ -85,12 +104,80 @@ export function Home() {
     useOutletContext<AppOutletContext>();
   const [selectedCountry, setSelectedCountry] = useState("");
   const [flippedCard, setFlippedCard] = useState<Set<string>>(() => new Set());
-  const countries = [...new Set(flashcards.map((flashcard) => flashcard.country))]
-    .filter(Boolean)
-    .sort();
+  const [isPickingLocation, setIsPickingLocation] = useState(false);
+  const [locationError, setLocationError] = useState("");
   const visibleFlashcards = selectedCountry
     ? flashcards.filter((flashcard) => flashcard.country === selectedCountry)
     : flashcards;
+
+  async function chooseCountryFromMap() {
+    setLocationError("");
+    setIsPickingLocation(true);
+
+    try {
+      const apiKey = import.meta.env.VITE_GEOAPIFY_API_KEY;
+      if (!apiKey) {
+        throw new Error(
+          "Geoapify is not configured. Set VITE_GEOAPIFY_API_KEY in .env.local.",
+        );
+      }
+
+      const cdsdk = (window as Window & {
+        cdsdk?: {
+          openLocationPicker?: (
+            options?: {
+              showUserLocation?: boolean;
+            },
+          ) => Promise<LocationPickerResult> | undefined;
+        };
+      }).cdsdk;
+
+      if (!cdsdk?.openLocationPicker) {
+        throw new Error("The CDSDK location picker is not available.");
+      }
+
+      const location = await cdsdk.openLocationPicker({
+        showUserLocation: true,
+      });
+      if (!location) {
+        throw new Error("The location picker did not return a location.");
+      }
+
+      const query = new URLSearchParams({
+        lat: String(location.latitude),
+        lon: String(location.longitude),
+        type: "country",
+        format: "json",
+        apiKey,
+      });
+      const response = await fetch(
+        `https://api.geoapify.com/v1/geocode/reverse?${query.toString()}`,
+      );
+      if (!response.ok) {
+        throw new Error(`Country lookup failed (HTTP ${response.status}).`);
+      }
+
+      const result: GeoapifyResponse = await response.json();
+      const countryCode = result.results?.[0]?.country_code?.toUpperCase();
+      const country = countryCode ? COUNTRY_BY_CODE[countryCode] : undefined;
+
+      if (!country) {
+        throw new Error(
+          "The selected location is not in Malaysia, Japan, or China. Choose a country manually.",
+        );
+      }
+
+      setSelectedCountry(country);
+    } catch (error) {
+      setLocationError(
+        error instanceof Error
+          ? error.message
+          : "Unable to determine the selected location's country.",
+      );
+    } finally {
+      setIsPickingLocation(false);
+    }
+  }
 
   return (
     <main>
@@ -101,16 +188,27 @@ export function Home() {
         Filter by country
         <select
           value={selectedCountry}
-          onChange={(event) => setSelectedCountry(event.target.value)}
+          onChange={(event) => {
+            setSelectedCountry(event.target.value);
+            setLocationError("");
+          }}
         >
           <option value="">All countries</option>
-          {countries.map((country) => (
+          {FLASHCARD_COUNTRIES.map((country) => (
             <option key={country} value={country}>
               {country}
             </option>
           ))}
         </select>
       </label>
+      <button
+        type="button"
+        onClick={() => void chooseCountryFromMap()}
+        disabled={isPickingLocation}
+      >
+        {isPickingLocation ? "Finding country..." : "Choose country from map"}
+      </button>
+      {locationError && <p role="alert">{locationError}</p>}
       <section className="flashcard-container" aria-label="Flashcards">
         {isLoading ? (
           <p>Loading flashcards...</p>

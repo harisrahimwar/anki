@@ -11,7 +11,7 @@ export type Flashcard = {
 
 export type NewFlashcard = Omit<Flashcard, "id">;
 
-const countries = ["Malaysia", "Japan", "China"] as const;
+export const FLASHCARD_COUNTRIES = ["Malaysia", "Japan", "China"] as const;
 
 function Admin() {
   const { flashcards, isLoading, loadError, onAdd } =
@@ -82,7 +82,7 @@ function Admin() {
             <option value="" disabled>
               Select a country
             </option>
-            {countries.map((countryOption) => (
+            {FLASHCARD_COUNTRIES.map((countryOption) => (
               <option key={countryOption} value={countryOption}>
                 {countryOption}
               </option>
