@@ -11,6 +11,8 @@ export type Flashcard = {
 
 export type NewFlashcard = Omit<Flashcard, "id">;
 
+const countries = ["Malaysia", "Japan", "China"] as const;
+
 function Admin() {
   const { flashcards, isLoading, loadError, onAdd } =
     useOutletContext<AppOutletContext>();
@@ -72,12 +74,20 @@ function Admin() {
         </label>
         <label>
           Country
-          <input
-            type="text"
+          <select
             value={country}
             onChange={(event) => setCountry(event.target.value)}
             required
-          />
+          >
+            <option value="" disabled>
+              Select a country
+            </option>
+            {countries.map((countryOption) => (
+              <option key={countryOption} value={countryOption}>
+                {countryOption}
+              </option>
+            ))}
+          </select>
         </label>
         <button type="submit" disabled={isLoading || isSaving}>
           {isSaving ? "Saving..." : "Add Flashcard"}
@@ -98,11 +108,11 @@ function Admin() {
           <tbody>
             {isLoading ? (
               <tr>
-                <td colSpan={2}>Loading flashcards...</td>
+                <td colSpan={3}>Loading flashcards...</td>
               </tr>
             ) : flashcards.length === 0 ? (
               <tr>
-                <td colSpan={2}>No flashcards have been added yet.</td>
+                <td colSpan={3}>No flashcards have been added yet.</td>
               </tr>
             ) : (
               flashcards.map((flashcard) => (

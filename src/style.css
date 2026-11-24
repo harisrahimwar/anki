@@ -69,7 +69,8 @@ h1 {
   text-align: left;
 }
 
-.flashcard-form input {
+.flashcard-form input,
+.flashcard-form select {
   min-width: 12rem;
   padding: 0.5rem;
   font: inherit;
