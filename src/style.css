@@ -28,7 +28,7 @@ h1 {
 }
 
 .flashcard {
-  width: min(20rem, 80vw);
+  width: min(20rem, calc(100vw - 9rem));
   min-height: 12rem;
   padding: 1.5rem;
   border: 1px solid #d1d5db;
@@ -109,13 +109,16 @@ h1 {
   gap: 1rem;
 }
 
-.flashcard-navigation {
+.flashcard-stage {
   display: flex;
+  align-items: center;
   justify-content: center;
-  gap: 1rem;
+  gap: 0.75rem;
+  width: 100%;
 }
 
-.flashcard-navigation button {
+.flashcard-arrow {
+  flex: 0 0 auto;
   min-width: 2.5rem;
   min-height: 2.5rem;
   font: inherit;

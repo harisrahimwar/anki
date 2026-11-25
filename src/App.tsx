@@ -228,19 +228,9 @@ export function Home() {
           </p>
         ) : (
           <>
-            <button
-              className="flashcard"
-              type="button"
-              aria-pressed={isFlipped}
-              onClick={() => setIsFlipped((flipped) => !flipped)}
-            >
-              {isFlipped ? currentFlashcard.meaning : currentFlashcard.word}
-            </button>
-            <p aria-live="polite">
-              Card {currentIndex + 1} of {visibleFlashcards.length}
-            </p>
-            <nav className="flashcard-navigation" aria-label="Flashcard navigation">
+            <div className="flashcard-stage">
               <button
+                className="flashcard-arrow"
                 type="button"
                 aria-label="Previous flashcard"
                 onClick={() => {
@@ -252,6 +242,15 @@ export function Home() {
                 ←
               </button>
               <button
+                className="flashcard"
+                type="button"
+                aria-pressed={isFlipped}
+                onClick={() => setIsFlipped((flipped) => !flipped)}
+              >
+                {isFlipped ? currentFlashcard.meaning : currentFlashcard.word}
+              </button>
+              <button
+                className="flashcard-arrow"
                 type="button"
                 aria-label="Next flashcard"
                 onClick={() => {
@@ -264,7 +263,10 @@ export function Home() {
               >
                 →
               </button>
-            </nav>
+            </div>
+            <p aria-live="polite">
+              Card {currentIndex + 1} of {visibleFlashcards.length}
+            </p>
           </>
         )}
       </section>
