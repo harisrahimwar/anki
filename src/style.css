@@ -108,3 +108,16 @@ h1 {
   justify-content: center;
   gap: 1rem;
 }
+
+.flashcard-navigation {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.flashcard-navigation button {
+  min-width: 2.5rem;
+  min-height: 2.5rem;
+  font: inherit;
+  font-size: 1.25rem;
+}

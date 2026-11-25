@@ -103,12 +103,20 @@ export function Home() {
   const { flashcards, isLoading, loadError } =
     useOutletContext<AppOutletContext>();
   const [selectedCountry, setSelectedCountry] = useState("");
-  const [flippedCard, setFlippedCard] = useState<Set<string>>(() => new Set());
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isFlipped, setIsFlipped] = useState(false);
   const [isPickingLocation, setIsPickingLocation] = useState(false);
   const [locationError, setLocationError] = useState("");
   const visibleFlashcards = selectedCountry
     ? flashcards.filter((flashcard) => flashcard.country === selectedCountry)
     : flashcards;
+  const currentFlashcard = visibleFlashcards[currentIndex];
+
+  function selectCountry(country: string) {
+    setSelectedCountry(country);
+    setCurrentIndex(0);
+    setIsFlipped(false);
+  }
 
   async function chooseCountryFromMap() {
     setLocationError("");
@@ -167,7 +175,7 @@ export function Home() {
         );
       }
 
-      setSelectedCountry(country);
+      selectCountry(country);
     } catch (error) {
       setLocationError(
         error instanceof Error
@@ -189,7 +197,7 @@ export function Home() {
         <select
           value={selectedCountry}
           onChange={(event) => {
-            setSelectedCountry(event.target.value);
+            selectCountry(event.target.value);
             setLocationError("");
           }}
         >
@@ -212,36 +220,52 @@ export function Home() {
       <section className="flashcard-container" aria-label="Flashcards">
         {isLoading ? (
           <p>Loading flashcards...</p>
-        ) : visibleFlashcards.length === 0 ? (
+        ) : !currentFlashcard ? (
           <p>
             {selectedCountry
               ? `No flashcards found for ${selectedCountry}.`
               : "No flashcards have been added yet."}
           </p>
         ) : (
-          visibleFlashcards.map((flashcard) => (
+          <>
             <button
-              key={flashcard.id}
               className="flashcard"
               type="button"
-              aria-pressed={flippedCard.has(flashcard.id)}
-              onClick={() =>
-                setFlippedCard((current) => {
-                  const next = new Set(current);
-                  if (next.has(flashcard.id)) {
-                    next.delete(flashcard.id);
-                  } else {
-                    next.add(flashcard.id);
-                  }
-                  return next;
-                })
-              }
+              aria-pressed={isFlipped}
+              onClick={() => setIsFlipped((flipped) => !flipped)}
             >
-              {flippedCard.has(flashcard.id)
-                ? flashcard.meaning
-                : flashcard.word}
+              {isFlipped ? currentFlashcard.meaning : currentFlashcard.word}
             </button>
-          ))
+            <p aria-live="polite">
+              Card {currentIndex + 1} of {visibleFlashcards.length}
+            </p>
+            <nav className="flashcard-navigation" aria-label="Flashcard navigation">
+              <button
+                type="button"
+                aria-label="Previous flashcard"
+                onClick={() => {
+                  setCurrentIndex((index) => Math.max(0, index - 1));
+                  setIsFlipped(false);
+                }}
+                disabled={currentIndex === 0}
+              >
+                ←
+              </button>
+              <button
+                type="button"
+                aria-label="Next flashcard"
+                onClick={() => {
+                  setCurrentIndex((index) =>
+                    Math.min(visibleFlashcards.length - 1, index + 1),
+                  );
+                  setIsFlipped(false);
+                }}
+                disabled={currentIndex >= visibleFlashcards.length - 1}
+              >
+                →
+              </button>
+            </nav>
+          </>
         )}
       </section>
     </main>
