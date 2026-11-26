@@ -189,10 +189,15 @@ export function Home() {
 
   return (
     <main>
-      <h1>Anki Flashcards</h1>
-      <Link to="/admin">Admin</Link>
+      <header className="screen-header">
+        <h1>Anki Flashcards</h1>
+        <Link className="header-link" to="/admin">
+          Admin
+        </Link>
+      </header>
+      <div className="sheet">
       {loadError && <p role="alert">Could not load flashcards: {loadError}</p>}
-      <label>
+      <label className="field">
         Filter by country
         <select
           value={selectedCountry}
@@ -210,6 +215,7 @@ export function Home() {
         </select>
       </label>
       <button
+        className="btn btn--secondary"
         type="button"
         onClick={() => void chooseCountryFromMap()}
         disabled={isPickingLocation}
@@ -228,9 +234,30 @@ export function Home() {
           </p>
         ) : (
           <>
-            <div className="flashcard-stage">
+            <p className="flashcard-progress" aria-live="polite">
+              Card {currentIndex + 1} of {visibleFlashcards.length}
+            </p>
+            <button
+              className="flashcard"
+              type="button"
+              aria-pressed={isFlipped}
+              onClick={() => setIsFlipped((flipped) => !flipped)}
+            >
+              <span className="flashcard__band" aria-hidden="true">
+                {currentFlashcard.country}
+              </span>
+              <span className="flashcard__body">
+                <span className="flashcard__kicker" aria-hidden="true">
+                  {isFlipped ? "MEANING" : "WORD"}
+                </span>
+                <span className="flashcard__text">
+                  {isFlipped ? currentFlashcard.meaning : currentFlashcard.word}
+                </span>
+              </span>
+            </button>
+            <div className="flashcard-nav">
               <button
-                className="flashcard-arrow"
+                className="flashcard-arrow flashcard-arrow--prev"
                 type="button"
                 aria-label="Previous flashcard"
                 onClick={() => {
@@ -239,18 +266,10 @@ export function Home() {
                 }}
                 disabled={currentIndex === 0}
               >
-                ←
+                <ChevronIcon direction="left" /> Previous
               </button>
               <button
-                className="flashcard"
-                type="button"
-                aria-pressed={isFlipped}
-                onClick={() => setIsFlipped((flipped) => !flipped)}
-              >
-                {isFlipped ? currentFlashcard.meaning : currentFlashcard.word}
-              </button>
-              <button
-                className="flashcard-arrow"
+                className="flashcard-arrow flashcard-arrow--next"
                 type="button"
                 aria-label="Next flashcard"
                 onClick={() => {
@@ -261,16 +280,34 @@ export function Home() {
                 }}
                 disabled={currentIndex >= visibleFlashcards.length - 1}
               >
-                →
+                Next <ChevronIcon direction="right" />
               </button>
             </div>
-            <p aria-live="polite">
-              Card {currentIndex + 1} of {visibleFlashcards.length}
-            </p>
           </>
         )}
       </section>
+      </div>
     </main>
+  );
+}
+
+// Chevron icons from the design prototype (i-chevron-left / i-chevron-right)
+export function ChevronIcon({ direction }: { direction: "left" | "right" }) {
+  return (
+    <svg
+      className="icon"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d={direction === "left" ? "M15 18L9 12L15 6" : "M9 18L15 12L9 6"} />
+    </svg>
   );
 }
 

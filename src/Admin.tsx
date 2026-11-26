@@ -1,6 +1,6 @@
 import { useState, type SubmitEvent } from "react";
 import { Link, useOutletContext } from "react-router";
-import type { AppOutletContext } from "./App";
+import { ChevronIcon, type AppOutletContext } from "./App";
 
 export type Flashcard = {
   id: string;
@@ -48,13 +48,18 @@ function Admin() {
 
   return (
     <section className="admin-panel" aria-labelledby="admin-heading">
-      <Link to="/">Back to flashcards</Link>
-      <h2 id="admin-heading">Admin Panel</h2>
+      <header className="screen-header">
+        <h2 id="admin-heading">Admin Panel</h2>
+      </header>
+      <div className="sheet">
+      <Link className="text-link" to="/">
+        <ChevronIcon direction="left" /> Back to flashcards
+      </Link>
 
       {loadError && <p role="alert">Could not load flashcards: {loadError}</p>}
 
       <form className="flashcard-form" onSubmit={addFlashcard}>
-        <label>
+        <label className="field">
           Word
           <input
             type="text"
@@ -63,7 +68,7 @@ function Admin() {
             required
           />
         </label>
-        <label>
+        <label className="field">
           Meaning
           <input
             type="text"
@@ -72,7 +77,7 @@ function Admin() {
             required
           />
         </label>
-        <label>
+        <label className="field">
           Country
           <select
             value={country}
@@ -89,7 +94,11 @@ function Admin() {
             ))}
           </select>
         </label>
-        <button type="submit" disabled={isLoading || isSaving}>
+        <button
+          className="btn btn--primary"
+          type="submit"
+          disabled={isLoading || isSaving}
+        >
           {isSaving ? "Saving..." : "Add Flashcard"}
         </button>
       </form>
@@ -125,6 +134,7 @@ function Admin() {
             )}
           </tbody>
         </table>
+      </div>
       </div>
     </section>
   );

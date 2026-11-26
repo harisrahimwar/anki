@@ -35,8 +35,11 @@ function login({onLogin}: LoginProps) {
 
     return (
         <main>
-            <h1>Login</h1>
-            echo "MSISDN: {msisdn}"
+            <header className="screen-header">
+                <h1>Login</h1>
+            </header>
+            <div className="sheet">
+            <p className="text-tertiary">echo "MSISDN: {msisdn}"</p>
             <form className="login-form" onSubmit={handleSubmit}>
                 <label htmlFor="msisdn">MSISDN</label>
                 <input
@@ -51,9 +54,10 @@ function login({onLogin}: LoginProps) {
                 }}
                 required
                 />
-                <button type="submit">Login</button>
+                <button className="btn btn--primary" type="submit">Login</button>
                 {error && <p role="alert">{error}</p>}
             </form>
+            </div>
         </main>
     );
 }

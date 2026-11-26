@@ -1,9 +1,45 @@
+/* =====================================================================
+   Design tokens — from the designer's prototype (CelcomDigi DS library)
+   ===================================================================== */
 :root {
-  font-family: system-ui, sans-serif;
-  color: #1f2937;
-  background: #f9fafb;
+  --navy-blue-500: #001871;
+  --navy-blue-400: #1a2e7f;
+  --navy-blue-25: #9aa3c6;
+  --bright-blue-500: #0064dc;
+  --bright-blue-50: #cce0f8;
+  --bright-blue-25: #e6f0fc;
+  --digi-yellow-500: #ffe000;
+  --gray-100: #f2f4f7;
+  --gray-200: #eaecf0;
+  --gray-300: #d0d5dd;
+  --white: #ffffff;
+  --text-primary: #000000;
+  --text-secondary: #344054;
+  --text-tertiary: #475467;
+  --text-brand-primary: #0064dc;
+  --text-error: #b42318;
+
+  --spacing-0-5: 2px;
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+  --border-radius-container: 16px;
+  --shadow-card: 0 4px 12px 0 rgba(0, 13, 51, 0.12);
+
+  --font-family-heading: "Montserrat", system-ui, sans-serif;
+  --font-family-body: "Lato", system-ui, sans-serif;
+
+  font-family: var(--font-family-body);
+  color: var(--text-primary);
+  background: var(--navy-blue-500);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
 * {
@@ -14,31 +50,220 @@ body {
   min-width: 320px;
   min-height: 100vh;
   margin: 0;
-  display: grid;
-  place-items: center;
+  -webkit-tap-highlight-color: transparent;
 }
 
-main {
-  padding: 2rem;
-  text-align: center;
+#root {
+  min-height: 100vh;
 }
 
-h1 {
-  margin-bottom: 0.5rem;
+/* =====================================================================
+   Screen layout: navy header + white sheet with rounded top corners
+   ===================================================================== */
+main,
+.admin-panel {
+  width: 100%;
+  max-width: 480px;
+  min-height: 100vh;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  background: var(--navy-blue-500);
+}
+
+.screen-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+  min-height: 78px;
+  padding: var(--spacing-2) var(--spacing-6);
+}
+
+.screen-header h1,
+.screen-header h2 {
+  margin: 0;
+  min-width: 0;
+  color: var(--white);
+  font: 700 20px/28px var(--font-family-heading);
+}
+
+.sheet {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  padding: var(--spacing-6);
+  background: var(--white);
+  border-radius: var(--border-radius-container) var(--border-radius-container) 0 0;
+  color: var(--text-primary);
+}
+
+/* Header link (prototype: "Change" link — yellow, bold) */
+.header-link {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  min-height: 44px;
+  padding: 0 var(--spacing-2);
+  color: var(--digi-yellow-500);
+  font: 700 14px/20px var(--font-family-body);
+  text-decoration: none;
+}
+
+/* In-sheet text link (prototype: tertiary button) */
+.text-link {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  min-height: 44px;
+  color: var(--text-brand-primary);
+  font: 700 16px/22px var(--font-family-body);
+  text-decoration: none;
+}
+
+.icon {
+  display: block;
+  flex: none;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid var(--digi-yellow-500);
+  outline-offset: 2px;
+}
+
+/* =====================================================================
+   Buttons (prototype: Button / CD type)
+   ===================================================================== */
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.btn {
+  width: 100%;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-6);
+  border-radius: var(--radius-full);
+  font: 700 16px/22px var(--font-family-body);
+}
+
+.btn--primary {
+  background: var(--bright-blue-500);
+  color: var(--white);
+}
+
+.btn--secondary {
+  background: var(--white);
+  color: var(--text-brand-primary);
+  border: 2px solid var(--bright-blue-500);
+}
+
+.btn:disabled {
+  background: var(--gray-200);
+  border-color: var(--gray-200);
+  color: var(--text-tertiary);
+  cursor: default;
+}
+
+/* =====================================================================
+   Form fields (styled like the prototype's settings rows)
+   ===================================================================== */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  color: var(--text-secondary);
+  font: 700 14px/20px var(--font-family-body);
+  text-align: left;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  height: 52px;
+  padding: 0 var(--spacing-4);
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-xl);
+  color: var(--text-primary);
+  font: 400 16px/22px var(--font-family-body);
+}
+
+.field select {
+  appearance: none;
+  padding-right: 48px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none' stroke='%230064dc' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+}
+
+.field input:focus,
+.field select:focus {
+  border-color: var(--bright-blue-500);
+}
+
+[role="alert"] {
+  margin: 0;
+  color: var(--text-error);
+  font: 400 14px/20px var(--font-family-body);
+}
+
+.text-tertiary {
+  margin: 0;
+  color: var(--text-tertiary);
+  font: 400 14px/20px var(--font-family-body);
+}
+
+/* =====================================================================
+   Flashcard deck (prototype: Flashcard / Passport / CD type)
+   ===================================================================== */
+.flashcard-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding-top: var(--spacing-3);
+}
+
+.flashcard-container > p {
+  margin: 0;
+  color: var(--text-secondary);
+  font: 700 14px/20px var(--font-family-body);
+}
+
+.flashcard-progress {
+  align-self: stretch;
+  text-align: left;
 }
 
 .flashcard {
-  width: min(20rem, calc(100vw - 9rem));
-  min-height: 12rem;
-  padding: 1.5rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.75rem;
-  background: #fff;
-  color: inherit;
-  font: inherit;
-  font-size: 1.25rem;
-  box-shadow: 0 4px 12px rgb(31 41 55 / 10%);
-  cursor: pointer;
+  position: relative;
+  width: 100%;
+  max-width: 312px;
+  min-height: 310px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 16px;
+  box-shadow: var(--shadow-card);
+  text-align: left;
   transition:
     box-shadow 150ms ease,
     transform 150ms ease;
@@ -46,81 +271,163 @@ h1 {
 
 .flashcard:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 18px rgb(31 41 55 / 14%);
+  box-shadow: 0 8px 18px rgba(0, 13, 51, 0.16);
 }
 
-.flashcard:focus-visible {
-  outline: 3px solid #2563eb;
-  outline-offset: 3px;
+.flashcard__band {
+  display: flex;
+  align-items: center;
+  height: 46px;
+  padding: 0 var(--spacing-6);
+  background: var(--navy-blue-500);
+  color: var(--white);
+  font: 700 12px/18px var(--font-family-body);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
+.flashcard__body {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: var(--spacing-4) 23px var(--spacing-6);
+}
+
+.flashcard__kicker {
+  color: var(--text-tertiary);
+  font: 700 12px/18px var(--font-family-body);
+  letter-spacing: 1.5px;
+}
+
+.flashcard[aria-pressed="true"] .flashcard__kicker {
+  color: var(--text-brand-primary);
+}
+
+.flashcard__text {
+  font: 700 18px/26px var(--font-family-body);
+  overflow-wrap: anywhere;
+}
+
+/* Prototype: Previous (secondary) / Next (primary) nav buttons */
+.flashcard-nav {
+  width: 100%;
+  max-width: 312px;
+  display: flex;
+  gap: var(--spacing-3);
+  padding-top: var(--spacing-2);
+}
+
+.flashcard-arrow {
+  flex: 1 0 0;
+  min-width: 0;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--radius-full);
+  font: 700 16px/22px var(--font-family-body);
+}
+
+.flashcard-arrow--prev {
+  background: var(--white);
+  color: var(--text-brand-primary);
+  border: 2px solid var(--bright-blue-500);
+}
+
+.flashcard-arrow--next {
+  background: var(--bright-blue-500);
+  color: var(--white);
+}
+
+.flashcard-arrow:disabled {
+  cursor: default;
+}
+
+.flashcard-arrow--prev:disabled {
+  border-color: var(--gray-200);
+  color: var(--text-tertiary);
+}
+
+.flashcard-arrow--next:disabled {
+  background: var(--gray-200);
+  color: var(--text-tertiary);
+}
+
+/* =====================================================================
+   Admin
+   ===================================================================== */
 .flashcard-form {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: end;
-  gap: 0.5rem;
-  margin-bottom: 2rem;
+  flex-direction: column;
+  gap: var(--spacing-3);
 }
 
-.flashcard-form label {
-  display: grid;
-  gap: 0.25rem;
-  text-align: left;
-}
-
-.flashcard-form input,
-.flashcard-form select {
-  min-width: 12rem;
-  padding: 0.5rem;
-  font: inherit;
-}
-
-.admin-panel {
-  margin: 2rem 0;
+.flashcard-form .btn {
+  margin-top: var(--spacing-1);
 }
 
 .flashcard-table-wrapper {
   max-width: 100%;
   overflow-x: auto;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-xl);
 }
 
 .flashcard-table {
   width: 100%;
   border-collapse: collapse;
-  background: #fff;
   text-align: left;
+  font: 400 14px/20px var(--font-family-body);
 }
 
 .flashcard-table th,
 .flashcard-table td {
-  padding: 0.75rem;
-  border: 1px solid #d1d5db;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.flashcard-table tbody tr:last-child td {
+  border-bottom: 0;
 }
 
 .flashcard-table th {
-  background: #f3f4f6;
+  background: var(--gray-100);
+  color: var(--text-secondary);
+  font: 700 12px/18px var(--font-family-body);
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
-.flashcard-container {
+/* =====================================================================
+   Login
+   ===================================================================== */
+.login-form {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1rem;
+  flex-direction: column;
+  gap: var(--spacing-3);
 }
 
-.flashcard-stage {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
+.login-form label {
+  color: var(--text-secondary);
+  font: 700 14px/20px var(--font-family-body);
+  text-align: left;
+}
+
+.login-form input {
   width: 100%;
+  height: 52px;
+  padding: 0 var(--spacing-4);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-xl);
+  font: 400 16px/22px var(--font-family-body);
 }
 
-.flashcard-arrow {
-  flex: 0 0 auto;
-  min-width: 2.5rem;
-  min-height: 2.5rem;
-  font: inherit;
-  font-size: 1.25rem;
+.login-form input:focus {
+  border-color: var(--bright-blue-500);
 }
