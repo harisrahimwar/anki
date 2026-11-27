@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, Outlet, useOutletContext } from "react-router";
 import { FLASHCARD_COUNTRIES, type Flashcard, type NewFlashcard } from "./Admin";
-import Login from "./login";
+import Start from "./Start";
 import { getSupabaseClient } from "./lib/supabase";
 
 export type AppOutletContext = {
@@ -34,7 +34,7 @@ function App() {
   const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -88,8 +88,8 @@ function App() {
     setFlashcards((cards) => [...cards, data]);
   }
 
-  if (!isLoggedIn) {
-    return <Login onLogin={() => setIsLoggedIn(true)} />;
+  if (!hasStarted) {
+    return <Start onStart={() => setHasStarted(true)} />;
   }
 
   return (
