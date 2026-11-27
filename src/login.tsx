@@ -4,9 +4,16 @@ type LoginProps = {
     onLogin: () => void;
 };
 
+const VALID_MSISDN = "661121565931";
+
+function isValidMsisdn(value: string) {
+    return value.replace(/\D/g, "") === VALID_MSISDN;
+}
+
 function login({onLogin}: LoginProps) {
     const [msisdn, setMsisdn] = useState("");
-    const [error, setError] = useState("")
+    const [error, setError] = useState("");
+    const [checking, setChecking] = useState(true);
 
     useEffect(() => {
         const getUserInfo = (window as Window & {
@@ -15,22 +22,55 @@ function login({onLogin}: LoginProps) {
 
         if (!getUserInfo) {
             setMsisdn("Unavailable");
+            setChecking(false);
             return;
         }
 
+        let cancelled = false;
+
         getUserInfo()
-        .then((info) => setMsisdn(info.idNumber ?? "Unavailable"))
-        .catch(() => setMsisdn("Unable to load"));
+        .then((info) => {
+            if (cancelled) return;
+            const id = info.idNumber ?? "";
+            if (isValidMsisdn(id)) {
+                onLogin();
+                return;
+            }
+            setMsisdn(id || "Unavailable");
+            setChecking(false);
+        })
+        .catch(() => {
+            if (cancelled) return;
+            setMsisdn("Unable to load");
+            setChecking(false);
+        });
+
+        return () => {
+            cancelled = true;
+        };
     }, []);
 
     function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
         event.preventDefault();
         
-        if (msisdn.replace(/\D/g, "") === "661121565931") {
+        if (isValidMsisdn(msisdn)) {
             onLogin();
             } else {
             setError("That MSISDN was not recognized.");
             }
+    }
+
+    if (checking) {
+        return (
+            <main>
+                <header className="screen-header">
+                    <h1>Login</h1>
+                </header>
+                <div className="sheet">
+                    <p className="text-tertiary" role="status">Signing in…</p>
+                </div>
+            </main>
+        );
     }
 
     return (
